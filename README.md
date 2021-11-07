@@ -1,15 +1,17 @@
-Unofficial command line tool for using [catbox.moe](https://catbox.moe)'s API
+Unofficial command line tool and library for using [catbox.moe](https://catbox.moe)'s API
 
 # Usage
 
 Use `catbox --help` to see usage.
 
 Catbox has the following commands:
-- upload: Upload to Catbox.
+- upload: Upload a file or URL to Catbox.
 - delete: Delete files
 - album: Album commands
 - litter: Upload a temporary file to Litterbox.
 
+If user hash is not given for `upload`, the files will be uploaded anonymously.
+Deleting files requires that user hash was given.
 
 The `album` subcommand has additional subcommands:
 - create: Create a new album
@@ -18,9 +20,11 @@ The `album` subcommand has additional subcommands:
 - add: Add files to an album
 - remove: Remove files from an album
 
-You can use `--help` on any command to see its usage.
+All album commands except `create` require an user hash.
 
-The basic `upload` command will accept both local files and URLs to files hosted somewhere else.
+You can use `--help` on any command to see information about its usage.
+
+The basic `upload` command will work with both local files and URLs to files hosted somewhere else.
 
 Some commands require an account hash to work. This can be supplied using
 the `--user` argument or by setting `CATBOX_USER_HASH` environment value.
@@ -43,7 +47,7 @@ catbox upload cute_picture.png
 
 Delete a file:
 ```
-catbox delete <file>.jpg --user 1234567890123456789012345
+catbox delete abc123.jpg --user 1234567890123456789012345
 ```
 
 Create an album:

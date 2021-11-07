@@ -10,7 +10,7 @@ tokio = { version = "*", features = ["full"] }
 
 [lib]
 name = "catbox"
-path = "lib/lib.rs"
+path = "src/lib/lib.rs"
 
 [[bin]]
 name = "catbox"

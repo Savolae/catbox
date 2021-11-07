@@ -1,5 +1,18 @@
 Unofficial command line tool and library for using [catbox.moe](https://catbox.moe)'s API
 
+# Install
+
+Install the command line tool with Cargo:
+```
+cargo install --bin --git https://github.com/Savolae/catbox
+```
+
+To use the library in your project, add the repo to your Cargo.toml:
+```
+[dependencies]
+catbox = { git = "https://github.com/Savolae/catbox" }
+```
+
 # Usage
 
 Use `catbox --help` to see usage.

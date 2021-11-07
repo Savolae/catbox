@@ -1,0 +1,21 @@
+[package]
+name = "catbox"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "*", default-features = false }
+reqwest = { version = "*", features = ["multipart"] }
+tokio = { version = "*", features = ["full"] }
+
+[lib]
+name = "catbox"
+path = "lib/lib.rs"
+
+[[bin]]
+name = "catbox"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = 'z'
+lto = true

@@ -23,13 +23,13 @@ use crate::CATBOX_API_URL;
 /// * `file_path` - Path to the file to be uploaded
 /// * `user_hash` - User's account hash, required for deleting. (Optional)
 pub async fn from_file(file_path: &str, user_hash: Option<&str>) -> Result<String, Box<dyn Error>> {
-    let file = file_contents(file_path).await?;
+    let file = file_stream(file_path).await?;
     let file_name = file_name(file_path);
 
     let form = Form::new()
         .text("reqtype", "fileupload")
         .text("userhash", user_hash.unwrap_or_default().to_owned())
-        .part("fileToUpload", Part::bytes(file).file_name(file_name));
+        .part("fileToUpload", Part::stream(file).file_name(file_name));
 
     Ok(Client::new()
         .post(CATBOX_API_URL)

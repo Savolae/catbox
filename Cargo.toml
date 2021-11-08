@@ -1,12 +1,13 @@
 [package]
 name = "catbox"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 
 [dependencies]
 clap = { version = "*", default-features = false }
-reqwest = { version = "*", features = ["multipart"] }
+reqwest = { version = "*", features = ["multipart", "stream"] }
 tokio = { version = "*", features = ["full"] }
+tokio-util = { version = "*", features = ["io"] }
 
 [lib]
 name = "catbox"

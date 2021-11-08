@@ -1,19 +1,18 @@
 //! Helper functions for handling files
-use tokio::{fs::File, io::AsyncReadExt};
+use reqwest::Body;
+use tokio::fs::File;
+use tokio_util::io::ReaderStream;
 
 use std::error::Error;
 use std::path::Path;
 
-/// Read the file and return its contents as a vector of bytes
+/// Return a Body wrapping a stream to the file's contents
 ///
 /// # Arguments
 ///
 /// * `file_path` - Path to the file
-pub async fn file_contents(file_path: &str) -> Result<Vec<u8>, Box<dyn Error>> {
-    let mut file = File::open(file_path).await?;
-    let mut contents = vec![];
-    file.read_to_end(&mut contents).await?;
-    Ok(contents)
+pub async fn file_stream(file_path: &str) -> Result<Body, Box<dyn Error>> {
+    Ok(Body::wrap_stream(ReaderStream::new(File::open(file_path).await?)))
 }
 
 /// Strip off the directory and return the file's name and extension

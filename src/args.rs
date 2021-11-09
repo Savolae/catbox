@@ -12,13 +12,7 @@ pub fn get_app() -> clap::App<'static, 'static> {
         .subcommand(
             SubCommand::with_name("delete")
                 .about("Delete files")
-                .arg(
-                    Arg::with_name("user hash")
-                        .long("user")
-                        .short("u")
-                        .required(true)
-                        .takes_value(true),
-                )
+                .arg(Arg::with_name("user hash").long("user").short("u").takes_value(true))
                 .arg(Arg::with_name("files").required(true).takes_value(true).multiple(true)),
         )
         .subcommand(

@@ -9,6 +9,10 @@ reqwest = { version = "*", features = ["multipart", "stream"] }
 tokio = { version = "*", features = ["full"] }
 tokio-util = { version = "*", features = ["io"] }
 
+[dev-dependencies]
+tempfile = "*"
+sha2 = "*"
+
 [lib]
 name = "catbox"
 path = "src/lib/lib.rs"

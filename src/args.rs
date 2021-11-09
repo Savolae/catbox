@@ -2,7 +2,7 @@ use clap::{App, Arg, SubCommand};
 
 pub fn get_app() -> clap::App<'static, 'static> {
     App::new("catbox")
-        .version("0.2.0")
+        .version(env!("CARGO_PKG_VERSION"))
         .subcommand(
             SubCommand::with_name("upload")
                 .about("Upload to Catbox. Max size 200MB.")

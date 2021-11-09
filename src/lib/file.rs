@@ -83,3 +83,63 @@ pub async fn delete(user_hash: &str, files: Vec<&str>) -> Result<String, Box<dyn
         .text()
         .await?)
 }
+
+#[cfg(test)]
+pub mod tests {
+    // Note: All tests assume that an user hash is set in env
+
+    use reqwest;
+    use sha2::{Digest, Sha256};
+    use tempfile::{Builder, NamedTempFile};
+
+    use std::io::prelude::*;
+
+    use std::error::Error;
+
+    use super::{delete, from_file};
+
+    static FILE_CONTENT: &str = "This is a test file";
+
+    pub fn file_creator() -> impl Fn(&str) -> NamedTempFile {
+        move |content: &str| {
+            let mut file = Builder::new().tempfile().unwrap();
+            write!(file, "{}", content).unwrap();
+            file
+        }
+    }
+
+    pub async fn upload_file(content: &str) -> Result<String, Box<dyn Error>> {
+        let file = file_creator();
+        from_file(file(content).path().to_str().unwrap(), Some(env!("CATBOX_USER_HASH"))).await
+    }
+
+    pub async fn delete_files(files: Vec<&str>) -> Result<String, Box<dyn Error>> {
+        Ok(delete(env!("CATBOX_USER_HASH"), files).await?)
+    }
+
+    #[tokio::test]
+    async fn upload_and_delete_file() -> Result<(), Box<dyn Error>> {
+        let file = file_creator()(FILE_CONTENT);
+        let res = from_file(file.path().to_str().unwrap(), Some(env!("CATBOX_USER_HASH"))).await?;
+        assert!(
+            res.starts_with("https://files.catbox.moe/"),
+            "Catbox returned {:?}!",
+            res
+        );
+
+        let download = reqwest::get(&res).await?;
+        let original_hash = Sha256::new().chain(FILE_CONTENT).finalize();
+        let download_hash = Sha256::new().chain(download.text().await?).finalize();
+
+        assert_eq!(
+            original_hash, download_hash,
+            "Downloaded file did not match uploaded file!"
+        );
+
+        let file_name = res.split("/").last().unwrap();
+        let res = delete_files(vec![file_name]).await?;
+        assert_eq!(res, "Files successfully deleted.", "Catbox returned {:?}!", res);
+
+        Ok(())
+    }
+}

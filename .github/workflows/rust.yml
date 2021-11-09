@@ -7,11 +7,13 @@ on:
 env:
   CARGO_TERM_COLOR: always
   RUSTFLAGS: -D warnings
+  CATBOX_USER_HASH: ${{ secrets.CATBOX_USER_HASH }}
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
+    environment: test-runner
 
     steps:
     - uses: actions/checkout@v2

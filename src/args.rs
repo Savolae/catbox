@@ -6,8 +6,8 @@ pub fn get_app() -> clap::App<'static, 'static> {
         .subcommand(
             SubCommand::with_name("upload")
                 .about("Upload to Catbox. Max size 200MB.")
-                .arg(Arg::with_name("filepath").required(true).takes_value(true))
-                .arg(Arg::with_name("user hash").long("user").short("u").takes_value(true)),
+                .arg(Arg::with_name("user hash").long("user").short("u").takes_value(true))
+                .arg(Arg::with_name("files").required(true).takes_value(true).multiple(true)),
         )
         .subcommand(
             SubCommand::with_name("delete")
@@ -70,13 +70,7 @@ pub fn get_app() -> clap::App<'static, 'static> {
                 .subcommand(
                     SubCommand::with_name("delete")
                         .about("Delete an album")
-                        .arg(
-                            Arg::with_name("short")
-                                .long("short")
-                                .short("s")
-                                .required(true)
-                                .takes_value(true),
-                        )
+                        .arg(Arg::with_name("short").required(true).takes_value(true))
                         .arg(Arg::with_name("user hash").long("user").short("u").takes_value(true)),
                 ),
         )

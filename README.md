@@ -58,9 +58,16 @@ Upload a file:
 catbox upload cute_picture.png
 ```
 
+Upload multiple files:
+```
+catbox upload *.jpg  # Upload all jpg files
+catbox upload image.png file.txt  # Upload image.png and file.txt
+```
+
 Delete a file:
 ```
 catbox delete abc123.jpg --user 1234567890123456789012345
+catbox delete https://files.catbox.moe/123456.png
 ```
 
 Create an album:

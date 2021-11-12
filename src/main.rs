@@ -44,7 +44,9 @@ fn album_url_to_short<'a>(url: &'a str) -> &'a str {
     }
 }
 
-async fn parse_album<'a>(matches: &'a ArgMatches<'static>) -> Result<String, Box<dyn std::error::Error>> {
+async fn parse_album<'a>(
+    matches: &'a ArgMatches<'static>,
+) -> Result<String, Box<dyn std::error::Error>> {
     Ok(match matches.subcommand() {
         ("create", Some(sub_cmd)) => create_album(sub_cmd).await?,
         ("delete", Some(sub_cmd)) => delete_album(sub_cmd).await?,
@@ -55,7 +57,9 @@ async fn parse_album<'a>(matches: &'a ArgMatches<'static>) -> Result<String, Box
     })
 }
 
-async fn upload_file<'a>(matches: &'a ArgMatches<'static>) -> Result<String, Box<dyn std::error::Error>> {
+async fn upload_file<'a>(
+    matches: &'a ArgMatches<'static>,
+) -> Result<String, Box<dyn std::error::Error>> {
     let files: Vec<&str> = matches.values_of("files").unwrap_or_default().collect();
     let env_user = user_hash_from_env();
     let user = matches.value_of("user hash").or(env_user.as_deref());
@@ -70,7 +74,9 @@ async fn upload_file<'a>(matches: &'a ArgMatches<'static>) -> Result<String, Box
     Ok(results.join("\n"))
 }
 
-async fn delete_file<'a>(matches: &'a ArgMatches<'static>) -> Result<String, Box<dyn std::error::Error>> {
+async fn delete_file<'a>(
+    matches: &'a ArgMatches<'static>,
+) -> Result<String, Box<dyn std::error::Error>> {
     Ok(catbox::file::delete(
         matches
             .value_of("user hash")
@@ -84,7 +90,9 @@ async fn delete_file<'a>(matches: &'a ArgMatches<'static>) -> Result<String, Box
     .await?)
 }
 
-async fn litter<'a>(matches: &'a ArgMatches<'static>) -> Result<String, Box<dyn std::error::Error>> {
+async fn litter<'a>(
+    matches: &'a ArgMatches<'static>,
+) -> Result<String, Box<dyn std::error::Error>> {
     Ok(catbox::litter::upload(
         matches.value_of("filepath").unwrap_or_default(),
         matches.value_of("time").unwrap_or("1h"),
@@ -92,11 +100,15 @@ async fn litter<'a>(matches: &'a ArgMatches<'static>) -> Result<String, Box<dyn 
     .await?)
 }
 
-async fn create_album<'a>(matches: &'a ArgMatches<'static>) -> Result<String, Box<dyn std::error::Error>> {
+async fn create_album<'a>(
+    matches: &'a ArgMatches<'static>,
+) -> Result<String, Box<dyn std::error::Error>> {
     Ok(catbox::album::create(
         matches.value_of("title").unwrap_or_default(),
         matches.value_of("description").unwrap_or_default(),
-        matches.value_of("user hash").or(user_hash_from_env().as_deref()),
+        matches
+            .value_of("user hash")
+            .or(user_hash_from_env().as_deref()),
         matches
             .values_of("files")
             .unwrap_or_default()
@@ -106,7 +118,9 @@ async fn create_album<'a>(matches: &'a ArgMatches<'static>) -> Result<String, Bo
     .await?)
 }
 
-async fn delete_album<'a>(matches: &'a ArgMatches<'static>) -> Result<String, Box<dyn std::error::Error>> {
+async fn delete_album<'a>(
+    matches: &'a ArgMatches<'static>,
+) -> Result<String, Box<dyn std::error::Error>> {
     Ok(catbox::album::delete(
         album_url_to_short(matches.value_of("short").unwrap_or_default()),
         matches
@@ -116,7 +130,9 @@ async fn delete_album<'a>(matches: &'a ArgMatches<'static>) -> Result<String, Bo
     .await?)
 }
 
-async fn edit_album<'a>(matches: &'a ArgMatches<'static>) -> Result<String, Box<dyn std::error::Error>> {
+async fn edit_album<'a>(
+    matches: &'a ArgMatches<'static>,
+) -> Result<String, Box<dyn std::error::Error>> {
     Ok(catbox::album::edit(
         album_url_to_short(matches.value_of("short").unwrap_or_default()),
         matches.value_of("title").unwrap_or_default(),
@@ -133,7 +149,9 @@ async fn edit_album<'a>(matches: &'a ArgMatches<'static>) -> Result<String, Box<
     .await?)
 }
 
-async fn add_to_album<'a>(matches: &'a ArgMatches<'static>) -> Result<String, Box<dyn std::error::Error>> {
+async fn add_to_album<'a>(
+    matches: &'a ArgMatches<'static>,
+) -> Result<String, Box<dyn std::error::Error>> {
     Ok(catbox::album::add_files(
         album_url_to_short(matches.value_of("short").unwrap_or_default()),
         matches
@@ -148,7 +166,9 @@ async fn add_to_album<'a>(matches: &'a ArgMatches<'static>) -> Result<String, Bo
     .await?)
 }
 
-async fn remove_from_album<'a>(matches: &'a ArgMatches<'static>) -> Result<String, Box<dyn std::error::Error>> {
+async fn remove_from_album<'a>(
+    matches: &'a ArgMatches<'static>,
+) -> Result<String, Box<dyn std::error::Error>> {
     Ok(catbox::album::remove_files(
         album_url_to_short(matches.value_of("short").unwrap_or_default()),
         matches

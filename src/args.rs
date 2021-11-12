@@ -6,14 +6,34 @@ pub fn get_app() -> clap::App<'static, 'static> {
         .subcommand(
             SubCommand::with_name("upload")
                 .about("Upload to Catbox. Max size 200MB.")
-                .arg(Arg::with_name("user hash").long("user").short("u").takes_value(true))
-                .arg(Arg::with_name("files").required(true).takes_value(true).multiple(true)),
+                .arg(
+                    Arg::with_name("user hash")
+                        .long("user")
+                        .short("u")
+                        .takes_value(true),
+                )
+                .arg(
+                    Arg::with_name("files")
+                        .required(true)
+                        .takes_value(true)
+                        .multiple(true),
+                ),
         )
         .subcommand(
             SubCommand::with_name("delete")
                 .about("Delete files")
-                .arg(Arg::with_name("user hash").long("user").short("u").takes_value(true))
-                .arg(Arg::with_name("files").required(true).takes_value(true).multiple(true)),
+                .arg(
+                    Arg::with_name("user hash")
+                        .long("user")
+                        .short("u")
+                        .takes_value(true),
+                )
+                .arg(
+                    Arg::with_name("files")
+                        .required(true)
+                        .takes_value(true)
+                        .multiple(true),
+                ),
         )
         .subcommand(
             SubCommand::with_name("album")
@@ -21,10 +41,30 @@ pub fn get_app() -> clap::App<'static, 'static> {
                 .subcommand(
                     SubCommand::with_name("create")
                         .about("Create a new album")
-                        .arg(Arg::with_name("title").long("title").short("t").takes_value(true))
-                        .arg(Arg::with_name("description").long("desc").short("d").takes_value(true))
-                        .arg(Arg::with_name("user hash").long("user").short("u").takes_value(true))
-                        .arg(Arg::with_name("files").required(true).takes_value(true).multiple(true)),
+                        .arg(
+                            Arg::with_name("title")
+                                .long("title")
+                                .short("t")
+                                .takes_value(true),
+                        )
+                        .arg(
+                            Arg::with_name("description")
+                                .long("desc")
+                                .short("d")
+                                .takes_value(true),
+                        )
+                        .arg(
+                            Arg::with_name("user hash")
+                                .long("user")
+                                .short("u")
+                                .takes_value(true),
+                        )
+                        .arg(
+                            Arg::with_name("files")
+                                .required(true)
+                                .takes_value(true)
+                                .multiple(true),
+                        ),
                 )
                 .subcommand(
                     SubCommand::with_name("edit")
@@ -36,10 +76,30 @@ pub fn get_app() -> clap::App<'static, 'static> {
                                 .required(true)
                                 .takes_value(true),
                         )
-                        .arg(Arg::with_name("title").long("title").short("t").takes_value(true))
-                        .arg(Arg::with_name("description").long("Desc").short("d").takes_value(true))
-                        .arg(Arg::with_name("user hash").long("user").short("u").takes_value(true))
-                        .arg(Arg::with_name("files").required(true).takes_value(true).multiple(true)),
+                        .arg(
+                            Arg::with_name("title")
+                                .long("title")
+                                .short("t")
+                                .takes_value(true),
+                        )
+                        .arg(
+                            Arg::with_name("description")
+                                .long("Desc")
+                                .short("d")
+                                .takes_value(true),
+                        )
+                        .arg(
+                            Arg::with_name("user hash")
+                                .long("user")
+                                .short("u")
+                                .takes_value(true),
+                        )
+                        .arg(
+                            Arg::with_name("files")
+                                .required(true)
+                                .takes_value(true)
+                                .multiple(true),
+                        ),
                 )
                 .subcommand(
                     SubCommand::with_name("add")
@@ -51,8 +111,18 @@ pub fn get_app() -> clap::App<'static, 'static> {
                                 .required(true)
                                 .takes_value(true),
                         )
-                        .arg(Arg::with_name("user hash").long("user").short("u").takes_value(true))
-                        .arg(Arg::with_name("files").required(true).takes_value(true).multiple(true)),
+                        .arg(
+                            Arg::with_name("user hash")
+                                .long("user")
+                                .short("u")
+                                .takes_value(true),
+                        )
+                        .arg(
+                            Arg::with_name("files")
+                                .required(true)
+                                .takes_value(true)
+                                .multiple(true),
+                        ),
                 )
                 .subcommand(
                     SubCommand::with_name("remove")
@@ -64,14 +134,29 @@ pub fn get_app() -> clap::App<'static, 'static> {
                                 .required(true)
                                 .takes_value(true),
                         )
-                        .arg(Arg::with_name("user hash").long("user").short("u").takes_value(true))
-                        .arg(Arg::with_name("files").required(true).takes_value(true).multiple(true)),
+                        .arg(
+                            Arg::with_name("user hash")
+                                .long("user")
+                                .short("u")
+                                .takes_value(true),
+                        )
+                        .arg(
+                            Arg::with_name("files")
+                                .required(true)
+                                .takes_value(true)
+                                .multiple(true),
+                        ),
                 )
                 .subcommand(
                     SubCommand::with_name("delete")
                         .about("Delete an album")
                         .arg(Arg::with_name("short").required(true).takes_value(true))
-                        .arg(Arg::with_name("user hash").long("user").short("u").takes_value(true)),
+                        .arg(
+                            Arg::with_name("user hash")
+                                .long("user")
+                                .short("u")
+                                .takes_value(true),
+                        ),
                 ),
         )
         .subcommand(

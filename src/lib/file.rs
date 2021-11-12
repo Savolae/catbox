@@ -96,9 +96,11 @@ pub mod tests {
 
     use std::error::Error;
 
-    use super::{delete, from_file};
+    use super::{delete, from_file, from_url};
 
     static FILE_CONTENT: &str = "This is a test file";
+    static IMAGE_URL: &str =
+        "https://file-examples-com.github.io/uploads/2017/10/file_example_PNG_500kB.png";
 
     pub fn file_creator() -> impl Fn(&str) -> NamedTempFile {
         move |content: &str| {
@@ -110,7 +112,11 @@ pub mod tests {
 
     pub async fn upload_file(content: &str) -> Result<String, Box<dyn Error>> {
         let file = file_creator();
-        from_file(file(content).path().to_str().unwrap(), Some(env!("CATBOX_USER_HASH"))).await
+        from_file(
+            file(content).path().to_str().unwrap(),
+            Some(env!("CATBOX_USER_HASH")),
+        )
+        .await
     }
 
     pub async fn delete_files(files: Vec<&str>) -> Result<String, Box<dyn Error>> {
@@ -120,7 +126,11 @@ pub mod tests {
     #[tokio::test]
     async fn upload_and_delete_file() -> Result<(), Box<dyn Error>> {
         let file = file_creator()(FILE_CONTENT);
-        let res = from_file(file.path().to_str().unwrap(), Some(env!("CATBOX_USER_HASH"))).await?;
+        let res = from_file(
+            file.path().to_str().unwrap(),
+            Some(env!("CATBOX_USER_HASH")),
+        )
+        .await?;
         assert!(
             res.starts_with("https://files.catbox.moe/"),
             "Catbox returned {:?}!",
@@ -138,7 +148,41 @@ pub mod tests {
 
         let file_name = res.split("/").last().unwrap();
         let res = delete_files(vec![file_name]).await?;
-        assert_eq!(res, "Files successfully deleted.", "Catbox returned {:?}!", res);
+        assert_eq!(
+            res, "Files successfully deleted.",
+            "Catbox returned {:?}!",
+            res
+        );
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn upload_and_delete_url() -> Result<(), Box<dyn Error>> {
+        let res = from_url(IMAGE_URL, Some(env!("CATBOX_USER_HASH"))).await?;
+        assert!(
+            res.starts_with("https://files.catbox.moe/"),
+            "Catbox returned {:?}!",
+            res
+        );
+
+        let download = reqwest::get(&res).await?;
+        let original = reqwest::get(IMAGE_URL).await?;
+        let original_hash = Sha256::new().chain(original.text().await?).finalize();
+        let download_hash = Sha256::new().chain(download.text().await?).finalize();
+
+        assert_eq!(
+            original_hash, download_hash,
+            "Downloaded file did not match uploaded file!"
+        );
+
+        let file_name = res.split("/").last().unwrap();
+        let res = delete_files(vec![file_name]).await?;
+        assert_eq!(
+            res, "Files successfully deleted.",
+            "Catbox returned {:?}!",
+            res
+        );
 
         Ok(())
     }

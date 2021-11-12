@@ -12,7 +12,9 @@ use std::path::Path;
 ///
 /// * `file_path` - Path to the file
 pub async fn file_stream(file_path: &str) -> Result<Body, Box<dyn Error>> {
-    Ok(Body::wrap_stream(ReaderStream::new(File::open(file_path).await?)))
+    Ok(Body::wrap_stream(ReaderStream::new(
+        File::open(file_path).await?,
+    )))
 }
 
 /// Strip off the directory and return the file's name and extension

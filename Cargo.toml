@@ -6,6 +6,7 @@ edition = "2021"
 homepage = "https://github.com/Savolae/catbox"
 repository = "https://github.com/Savolae/catbox"
 readme = "README.md"
+documentation = "https://savolae.github.io/catbox/catbox/index.html"
 license = "MIT"
 keywords = ["file-upload", "file-hosting"]
 categories = ["command-line-utilities", "filesystem", "api-bindings"]

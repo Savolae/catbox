@@ -9,6 +9,7 @@ jobs:
   release:
     name: Release for ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    environment: catbox
     strategy:
       matrix:
         name: [
@@ -40,3 +41,20 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: ${{ matrix.artifact_name }}
+
+  publish:
+    name: Publish crate
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions-rs/toolschain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+
+    - name: Publish crate
+      env:
+        CRATES_IO_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+    - run: cargo login ${CRATES_IO_TOKEN}
+    - run: cargo publish

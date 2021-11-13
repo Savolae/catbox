@@ -48,8 +48,10 @@ jobs:
     environment: catbox
 
     steps:
+    - name: Checkout
     - uses: actions/checkout@v2
 
+    - name: Install Rust toolchain
     - uses: actions-rs/toolschain@v1
       with:
         profile: minimal

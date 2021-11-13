@@ -49,14 +49,14 @@ jobs:
 
     steps:
     - name: Checkout
-    - uses: actions/checkout@v2
+      uses: actions/checkout@v2
 
     - name: Install Rust toolchain
-    - uses: actions-rs/toolschain@v1
+      uses: actions-rs/toolschain@v1
       with:
         profile: minimal
         toolchain: stable
 
     - name: Publish crate
-    - run: cargo login ${{ secrets.CRATES_IO_TOKEN }}
-    - run: cargo publish
+      run: cargo login ${{ secrets.CRATES_IO_TOKEN }}
+      run: cargo publish

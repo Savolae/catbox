@@ -39,7 +39,7 @@ jobs:
         profile: minimal
         toolchain: stable
 
-    - name: Build:
+    - name: Build
       run: cargo build --release --locked
 
     - name: Upload to release

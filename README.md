@@ -8,13 +8,13 @@ See the [GitHub Releases page](https://github.com/Savolae/catbox/releases) for t
 
 You can compile and install the command line tool with Cargo:
 ```
-cargo install --bin --git https://github.com/Savolae/catbox
+cargo install catbox
 ```
 
 To use the library in your project, add the repo to your Cargo.toml:
 ```
 [dependencies]
-catbox = { git = "https://github.com/Savolae/catbox" }
+catbox = "*"
 ```
 
 # Usage

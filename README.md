@@ -1,5 +1,7 @@
 Unofficial command line tool and library for using [catbox.moe](https://catbox.moe)'s API
 
+For API documentation, see [Github Pages](https://savolae.github.io/catbox/catbox/index.html)
+
 # Install
 
 Install the command line tool with Cargo:

@@ -45,6 +45,8 @@ jobs:
   publish:
     name: Publish crate
     runs-on: ubuntu-latest
+    environment: catbox
+
     steps:
     - uses: actions/checkout@v2
 
@@ -54,7 +56,5 @@ jobs:
         toolchain: stable
 
     - name: Publish crate
-      env:
-        CRATES_IO_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
-    - run: cargo login ${CRATES_IO_TOKEN}
+    - run: cargo login ${{ secrets.CRATES_IO_TOKEN }}
     - run: cargo publish

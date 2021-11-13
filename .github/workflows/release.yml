@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  release:
+    name: Release for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        name: [
+          linux,
+          windows,
+          macos
+        ]
+
+        include:
+        - name: linux
+          on: ubuntu-latest
+          artifact_name: target/release/catbox
+          asset-name: catbox-linux
+        - name: windows
+          on: windows-latest
+          artifact_name: target/release/catbox.exe
+          asset-name: catbox-windows
+        - name: macos
+          on: macos-latest
+          artifact_name: target/release/catbox
+          asset_name: catbox-macos
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+
+    - name: Build:
+      run: cargo build --release --locked
+
+    - name: Upload to release
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ matrix.asset_name }}
+        path: ${{ matrix.artifact_name }}

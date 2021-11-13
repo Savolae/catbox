@@ -21,11 +21,11 @@ jobs:
         - name: linux
           os: ubuntu-latest
           artifact_name: target/release/catbox
-          asset-name: catbox-linux
+          asset_name: catbox-linux
         - name: windows
           os: windows-latest
           artifact_name: target/release/catbox.exe
-          asset-name: catbox-windows
+          asset_name: catbox-windows
         - name: macos
           os: macos-latest
           artifact_name: target/release/catbox

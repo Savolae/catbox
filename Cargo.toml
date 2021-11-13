@@ -1,7 +1,14 @@
 [package]
 name = "catbox"
+description = "Implementation of Catbox.moe's API"
 version = "0.3.0"
 edition = "2021"
+homepage = "https://github.com/Savolae/catbox"
+repository = "https://github.com/Savolae/catbox"
+readme = "README.md"
+license = "MIT"
+keywords = ["file-upload", "file-hosting"]
+categories = ["command-line-utilities", "filesystem", "api-bindings"]
 
 [dependencies]
 clap = { version = "*", default-features = false }

@@ -1,10 +1,12 @@
-Unofficial command line tool and library for using [catbox.moe](https://catbox.moe)'s API
+Unofficial command line tool and library for using [catbox.moe](https://catbox.moe)'s API.
 
-For API documentation, see [Github Pages](https://savolae.github.io/catbox/catbox/index.html)
+For the library documentation, see [Github Pages](https://savolae.github.io/catbox/catbox/index.html).
 
 # Install
 
-Install the command line tool with Cargo:
+See the [GitHub Releases page](https://github.com/Savolae/catbox/releases) for the latest Linux and Windows builds of the command line tool.
+
+You can compile and install the command line tool with Cargo:
 ```
 cargo install --bin --git https://github.com/Savolae/catbox
 ```
@@ -69,7 +71,7 @@ catbox upload image.png file.txt  # Upload image.png and file.txt
 Delete a file:
 ```
 catbox delete abc123.jpg --user 1234567890123456789012345
-catbox delete https://files.catbox.moe/123456.png
+catbox delete https://files.catbox.moe/123456.png  # Or just 123456.png
 ```
 
 Create an album:

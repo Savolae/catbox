@@ -1,10 +1,9 @@
 //! Helper functions for handling files
+use std::{error::Error, path::Path};
+
 use reqwest::Body;
 use tokio::fs::File;
 use tokio_util::io::ReaderStream;
-
-use std::error::Error;
-use std::path::Path;
 
 /// Return a Body wrapping a stream to the file's contents
 ///

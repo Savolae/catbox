@@ -84,7 +84,7 @@ pub fn get_app() -> clap::App<'static, 'static> {
                         )
                         .arg(
                             Arg::with_name("description")
-                                .long("Desc")
+                                .long("desc")
                                 .short("d")
                                 .takes_value(true),
                         )

@@ -4,15 +4,14 @@
 //!
 //! See <https://litterbox.catbox.moe/faq.php> for allowed filetypes and content.
 
+use std::error::Error;
+
 use reqwest::{
     multipart::{Form, Part},
     Client,
 };
 
-use std::error::Error;
-
-use crate::helper::*;
-use crate::LITTER_API_URL;
+use crate::{helper::*, LITTER_API_URL};
 
 /// Upload a temporary file to litterbox.
 /// Max size 1GB.
@@ -39,22 +38,4 @@ pub async fn upload(file_path: &str, time: &str) -> Result<String, Box<dyn Error
         .await?
         .text()
         .await?)
-}
-
-#[cfg(test)]
-pub mod tests {
-    use std::error::Error;
-
-    use crate::file::tests::file_creator;
-
-    use super::*;
-
-    #[tokio::test]
-    async fn upload_file() -> Result<(), Box<dyn Error>> {
-        let file = file_creator()("Some stuff in a file");
-        let res = upload(file.path().to_str().unwrap(), "1h").await?;
-        assert!(res.starts_with("https://litter.catbox.moe"));
-
-        Ok(())
-    }
 }

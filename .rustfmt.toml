@@ -1,0 +1,8 @@
+edition = "2021"
+version = "two"
+format_strings = true
+match_block_trailing_comma = true
+imports_granularity = "Crate"
+newline_style = "Unix"
+wrap_comments = true
+comment_width = 100

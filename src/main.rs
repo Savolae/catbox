@@ -1,4 +1,4 @@
-use std::{env, error::Error, path::Path};
+use std::{env, error::Error, future::Future, path::Path};
 
 use clap::ArgMatches;
 use futures::stream::{FuturesUnordered, StreamExt};
@@ -65,25 +65,25 @@ async fn parse_album<'a>(matches: &'a ArgMatches<'static>) -> Result<(), Box<dyn
 
 async fn upload<'a>(matches: &'a ArgMatches<'static>) -> Result<(), Box<dyn Error>> {
     let uris: Vec<&str> = matches.values_of("files").unwrap_or_default().collect();
-    let (files, urls): (Vec<_>, _) = uris.into_iter().partition(|uri| Path::new(&uri).exists());
-    let (urls, rest): (Vec<_>, _) = urls.iter().partition(|url| Url::parse(url).is_ok());
+    let (files, rest): (Vec<_>, _) = uris.into_iter().partition(|uri| Path::new(&uri).exists());
+    let (urls, rest): (Vec<_>, _) = rest.iter().partition(|uri| Url::parse(uri).is_ok());
     let env_user = user_hash_from_env();
     let user = matches.value_of("user hash").or(env_user.as_deref());
-    let print_res = |res| async move { println!("{}", res) };
+    let print_result = |res| async move { println!("{}", res) };
     tokio::join!(
         rest.into_iter()
             .map(|uri| invalid_uri(uri))
             .collect::<FuturesUnordered<_>>()
-            .for_each_concurrent(10, print_res),
+            .for_each_concurrent(10, print_result),
         urls.into_iter()
-            .map(|url| upload_url(url, user))
+            .map(|url| try_upload(file::from_url, url, user))
             .collect::<FuturesUnordered<_>>()
-            .for_each_concurrent(10, print_res),
+            .for_each_concurrent(10, print_result),
         files
             .into_iter()
-            .map(|file| upload_file(file, user))
+            .map(|file| try_upload(file::from_file, file, user))
             .collect::<FuturesUnordered<_>>()
-            .for_each_concurrent(10, print_res),
+            .for_each_concurrent(10, print_result),
     );
     Ok(())
 }
@@ -92,17 +92,25 @@ async fn invalid_uri(uri: &str) -> String {
     format!("Ignoring {}: Not a file or valid URL", uri)
 }
 
-async fn upload_file(file: &str, user: Option<&str>) -> String {
-    match file::from_file(file, user).await {
+async fn try_upload<'a, F, R>(
+    upload_funcion: F,
+    file_uri: &'a str,
+    user_hash: Option<&'a str>,
+) -> String
+where
+    F: FnOnce(&'a str, Option<&'a str>) -> R,
+    R: Future<Output = Result<String, Box<dyn Error>>>,
+{
+    match upload_funcion(file_uri, user_hash).await {
         Ok(res) => res,
-        Err(_) => format!("Uploading {} failed.", file),
+        Err(_) => format!("Uploading {} failed.", file_uri),
     }
 }
 
-async fn upload_url(url: &str, user: Option<&str>) -> String {
-    match file::from_url(url, user).await {
+async fn upload_to_litter(filepath: &str, time: &str) -> String {
+    match litter::upload(filepath, time).await {
         Ok(res) => res,
-        Err(_) => format!("Uploading {} failed.", url),
+        Err(_) => format!("Uploading {} failed.", filepath),
     }
 }
 
@@ -123,12 +131,22 @@ async fn delete_file<'a>(matches: &'a ArgMatches<'static>) -> Result<(), Box<dyn
 }
 
 async fn litter<'a>(matches: &'a ArgMatches<'static>) -> Result<(), Box<dyn Error>> {
-    let res = litter::upload(
-        matches.value_of("filepath").unwrap_or_default(),
-        matches.value_of("time").unwrap_or("1h"),
-    )
-    .await?;
-    println!("{}", res);
+    let paths: Vec<&str> = matches.values_of("files").unwrap_or_default().collect();
+    let (files, rest): (Vec<_>, _) = paths
+        .into_iter()
+        .partition(|path| Path::new(&path).exists());
+    let print_res = |res| async move { println!("{}", res) };
+    tokio::join!(
+        rest.into_iter()
+            .map(|uri| invalid_uri(uri))
+            .collect::<FuturesUnordered<_>>()
+            .for_each_concurrent(10, print_res),
+        files
+            .into_iter()
+            .map(|file| upload_to_litter(file, matches.value_of("time").unwrap_or("1h")))
+            .collect::<FuturesUnordered<_>>()
+            .for_each_concurrent(10, print_res),
+    );
     Ok(())
 }
 

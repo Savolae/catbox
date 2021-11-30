@@ -162,7 +162,12 @@ pub fn get_app() -> clap::App<'static, 'static> {
         .subcommand(
             SubCommand::with_name("litter")
                 .about("Upload a temporary file to Litterbox. Max size 1GB.")
-                .arg(Arg::with_name("filepath").required(true).takes_value(true))
+                .arg(
+                    Arg::with_name("files")
+                        .required(true)
+                        .takes_value(true)
+                        .multiple(true),
+                )
                 .arg(
                     Arg::with_name("time")
                         .long("time")

@@ -17,10 +17,10 @@ mod args;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     match args::get_app().get_matches().subcommand() {
-        ("upload", Some(sub_cmd)) => upload(sub_cmd).await,
-        ("delete", Some(sub_cmd)) => delete_file(sub_cmd).await,
-        ("album", Some(sub_cmd)) => parse_album(sub_cmd).await,
-        ("litter", Some(sub_cmd)) => litter(sub_cmd).await,
+        Some(("upload", sub_cmd)) => upload(sub_cmd).await,
+        Some(("delete", sub_cmd)) => delete_file(sub_cmd).await,
+        Some(("album", sub_cmd)) => parse_album(sub_cmd).await,
+        Some(("litter", sub_cmd)) => litter(sub_cmd).await,
         _ => {
             args::get_app().print_help()?;
             println!(""); // Because print_help does not print a newline at the end
@@ -49,21 +49,21 @@ fn album_url_to_short<'a>(url: &'a str) -> &'a str {
     }
 }
 
-async fn parse_album<'a>(matches: &'a ArgMatches<'static>) -> Result<(), Box<dyn Error>> {
+async fn parse_album<'a>(matches: &'a ArgMatches) -> Result<(), Box<dyn Error>> {
     match matches.subcommand() {
-        ("create", Some(sub_cmd)) => create_album(sub_cmd).await,
-        ("delete", Some(sub_cmd)) => delete_album(sub_cmd).await,
-        ("edit", Some(sub_cmd)) => edit_album(sub_cmd).await,
-        ("add", Some(sub_cmd)) => add_to_album(sub_cmd).await,
-        ("remove", Some(sub_cmd)) => remove_from_album(sub_cmd).await,
+        Some(("create", sub_cmd)) => create_album(sub_cmd).await,
+        Some(("delete", sub_cmd)) => delete_album(sub_cmd).await,
+        Some(("edit", sub_cmd)) => edit_album(sub_cmd).await,
+        Some(("add", sub_cmd)) => add_to_album(sub_cmd).await,
+        Some(("remove", sub_cmd)) => remove_from_album(sub_cmd).await,
         _ => {
-            println!("{}", matches.usage().to_string());
+            println!("{}", args::get_app().render_usage());
             Err("Invalid command".into())
         },
     }
 }
 
-async fn upload<'a>(matches: &'a ArgMatches<'static>) -> Result<(), Box<dyn Error>> {
+async fn upload<'a>(matches: &'a ArgMatches) -> Result<(), Box<dyn Error>> {
     let uris: Vec<&str> = matches.values_of("files").unwrap_or_default().collect();
     let (files, rest): (Vec<_>, _) = uris.into_iter().partition(|uri| Path::new(&uri).exists());
     let (urls, rest): (Vec<_>, _) = rest.iter().partition(|uri| Url::parse(uri).is_ok());
@@ -114,7 +114,7 @@ async fn upload_to_litter(filepath: &str, time: &str) -> String {
     }
 }
 
-async fn delete_file<'a>(matches: &'a ArgMatches<'static>) -> Result<(), Box<dyn Error>> {
+async fn delete_file<'a>(matches: &'a ArgMatches) -> Result<(), Box<dyn Error>> {
     let res = file::delete(
         matches
             .value_of("user hash")
@@ -130,7 +130,7 @@ async fn delete_file<'a>(matches: &'a ArgMatches<'static>) -> Result<(), Box<dyn
     Ok(())
 }
 
-async fn litter<'a>(matches: &'a ArgMatches<'static>) -> Result<(), Box<dyn Error>> {
+async fn litter<'a>(matches: &'a ArgMatches) -> Result<(), Box<dyn Error>> {
     let paths: Vec<&str> = matches.values_of("files").unwrap_or_default().collect();
     let (files, rest): (Vec<_>, _) = paths
         .into_iter()
@@ -150,7 +150,7 @@ async fn litter<'a>(matches: &'a ArgMatches<'static>) -> Result<(), Box<dyn Erro
     Ok(())
 }
 
-async fn create_album<'a>(matches: &'a ArgMatches<'static>) -> Result<(), Box<dyn Error>> {
+async fn create_album<'a>(matches: &'a ArgMatches) -> Result<(), Box<dyn Error>> {
     let res = album::create(
         matches.value_of("title").unwrap_or_default(),
         matches.value_of("description").unwrap_or_default(),
@@ -168,7 +168,7 @@ async fn create_album<'a>(matches: &'a ArgMatches<'static>) -> Result<(), Box<dy
     Ok(())
 }
 
-async fn delete_album<'a>(matches: &'a ArgMatches<'static>) -> Result<(), Box<dyn Error>> {
+async fn delete_album<'a>(matches: &'a ArgMatches) -> Result<(), Box<dyn Error>> {
     let res = album::delete(
         album_url_to_short(matches.value_of("short").unwrap_or_default()),
         matches
@@ -180,7 +180,7 @@ async fn delete_album<'a>(matches: &'a ArgMatches<'static>) -> Result<(), Box<dy
     Ok(())
 }
 
-async fn edit_album<'a>(matches: &'a ArgMatches<'static>) -> Result<(), Box<dyn Error>> {
+async fn edit_album<'a>(matches: &'a ArgMatches) -> Result<(), Box<dyn Error>> {
     let res = album::edit(
         album_url_to_short(matches.value_of("short").unwrap_or_default()),
         matches.value_of("title").unwrap_or_default(),
@@ -199,7 +199,7 @@ async fn edit_album<'a>(matches: &'a ArgMatches<'static>) -> Result<(), Box<dyn 
     Ok(())
 }
 
-async fn add_to_album<'a>(matches: &'a ArgMatches<'static>) -> Result<(), Box<dyn Error>> {
+async fn add_to_album<'a>(matches: &'a ArgMatches) -> Result<(), Box<dyn Error>> {
     let res = album::add_files(
         album_url_to_short(matches.value_of("short").unwrap_or_default()),
         matches
@@ -216,7 +216,7 @@ async fn add_to_album<'a>(matches: &'a ArgMatches<'static>) -> Result<(), Box<dy
     Ok(())
 }
 
-async fn remove_from_album<'a>(matches: &'a ArgMatches<'static>) -> Result<(), Box<dyn Error>> {
+async fn remove_from_album<'a>(matches: &'a ArgMatches) -> Result<(), Box<dyn Error>> {
     let res = album::remove_files(
         album_url_to_short(matches.value_of("short").unwrap_or_default()),
         matches
@@ -407,6 +407,8 @@ mod tests {
         let args = args::get_app().get_matches_from(vec![
             "catbox",
             "litter",
+            "--time",
+            "1h",
             file.path().to_str().unwrap(),
         ]);
 

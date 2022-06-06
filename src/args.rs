@@ -1,180 +1,169 @@
-use clap::{App, Arg, SubCommand};
+use clap::{Arg, Command};
 
-pub fn get_app() -> clap::App<'static, 'static> {
-    App::new("catbox")
+pub fn get_app() -> Command<'static> {
+    Command::new("catbox")
         .version(env!("CARGO_PKG_VERSION"))
         .subcommand(
-            SubCommand::with_name("upload")
+            Command::new("upload")
                 .about("Upload to Catbox. Max size 200MB.")
                 .arg(
-                    Arg::with_name("user hash")
+                    Arg::new("user hash")
                         .long("user")
-                        .short("u")
+                        .short('u')
                         .takes_value(true),
                 )
                 .arg(
-                    Arg::with_name("files")
+                    Arg::new("files")
                         .required(true)
                         .takes_value(true)
-                        .multiple(true),
+                        .multiple_values(true),
                 ),
         )
         .subcommand(
-            SubCommand::with_name("delete")
+            Command::new("delete")
                 .about("Delete files")
                 .arg(
-                    Arg::with_name("user hash")
+                    Arg::new("user hash")
                         .long("user")
-                        .short("u")
+                        .short('u')
                         .takes_value(true),
                 )
                 .arg(
-                    Arg::with_name("files")
+                    Arg::new("files")
                         .required(true)
                         .takes_value(true)
-                        .multiple(true),
+                        .multiple_values(true),
                 ),
         )
         .subcommand(
-            SubCommand::with_name("album")
+            Command::new("album")
                 .about("Album commands")
                 .subcommand(
-                    SubCommand::with_name("create")
+                    Command::new("create")
                         .about("Create a new album")
+                        .arg(Arg::new("title").long("title").short('t').takes_value(true))
                         .arg(
-                            Arg::with_name("title")
-                                .long("title")
-                                .short("t")
-                                .takes_value(true),
-                        )
-                        .arg(
-                            Arg::with_name("description")
+                            Arg::new("description")
                                 .long("desc")
-                                .short("d")
+                                .short('d')
                                 .takes_value(true),
                         )
                         .arg(
-                            Arg::with_name("user hash")
+                            Arg::new("user hash")
                                 .long("user")
-                                .short("u")
+                                .short('u')
                                 .takes_value(true),
                         )
                         .arg(
-                            Arg::with_name("files")
+                            Arg::new("files")
                                 .required(true)
                                 .takes_value(true)
-                                .multiple(true),
+                                .multiple_values(true),
                         ),
                 )
                 .subcommand(
-                    SubCommand::with_name("edit")
+                    Command::new("edit")
                         .about("Edit an album")
                         .arg(
-                            Arg::with_name("short")
+                            Arg::new("short")
                                 .long("short")
-                                .short("s")
+                                .short('s')
                                 .required(true)
                                 .takes_value(true),
                         )
+                        .arg(Arg::new("title").long("title").short('t').takes_value(true))
                         .arg(
-                            Arg::with_name("title")
-                                .long("title")
-                                .short("t")
-                                .takes_value(true),
-                        )
-                        .arg(
-                            Arg::with_name("description")
+                            Arg::new("description")
                                 .long("desc")
-                                .short("d")
+                                .short('d')
                                 .takes_value(true),
                         )
                         .arg(
-                            Arg::with_name("user hash")
+                            Arg::new("user hash")
                                 .long("user")
-                                .short("u")
+                                .short('u')
                                 .takes_value(true),
                         )
                         .arg(
-                            Arg::with_name("files")
+                            Arg::new("files")
                                 .required(true)
                                 .takes_value(true)
-                                .multiple(true),
+                                .multiple_values(true),
                         ),
                 )
                 .subcommand(
-                    SubCommand::with_name("add")
+                    Command::new("add")
                         .about("Add files to an album")
                         .arg(
-                            Arg::with_name("short")
+                            Arg::new("short")
                                 .long("short")
-                                .short("s")
+                                .short('s')
                                 .required(true)
                                 .takes_value(true),
                         )
                         .arg(
-                            Arg::with_name("user hash")
+                            Arg::new("user hash")
                                 .long("user")
-                                .short("u")
+                                .short('u')
                                 .takes_value(true),
                         )
                         .arg(
-                            Arg::with_name("files")
+                            Arg::new("files")
                                 .required(true)
                                 .takes_value(true)
-                                .multiple(true),
+                                .multiple_values(true),
                         ),
                 )
                 .subcommand(
-                    SubCommand::with_name("remove")
+                    Command::new("remove")
                         .about("Remove files from an album")
                         .arg(
-                            Arg::with_name("short")
+                            Arg::new("short")
                                 .long("short")
-                                .short("s")
+                                .short('s')
                                 .required(true)
                                 .takes_value(true),
                         )
                         .arg(
-                            Arg::with_name("user hash")
+                            Arg::new("user hash")
                                 .long("user")
-                                .short("u")
+                                .short('u')
                                 .takes_value(true),
                         )
                         .arg(
-                            Arg::with_name("files")
+                            Arg::new("files")
                                 .required(true)
                                 .takes_value(true)
-                                .multiple(true),
+                                .multiple_values(true),
                         ),
                 )
                 .subcommand(
-                    SubCommand::with_name("delete")
+                    Command::new("delete")
                         .about("Delete an album")
-                        .arg(Arg::with_name("short").required(true).takes_value(true))
+                        .arg(Arg::new("short").required(true).takes_value(true))
                         .arg(
-                            Arg::with_name("user hash")
+                            Arg::new("user hash")
                                 .long("user")
-                                .short("u")
+                                .short('u')
                                 .takes_value(true),
                         ),
                 ),
         )
         .subcommand(
-            SubCommand::with_name("litter")
+            Command::new("litter")
                 .about("Upload a temporary file to Litterbox. Max size 1GB.")
                 .arg(
-                    Arg::with_name("files")
+                    Arg::new("files")
                         .required(true)
                         .takes_value(true)
-                        .multiple(true),
+                        .multiple_values(true),
                 )
                 .arg(
-                    Arg::with_name("time")
+                    Arg::new("time")
                         .long("time")
-                        .short("t")
+                        .short('t')
                         .required(true)
-                        .possible_values(&["1h", "12h", "24h", "72h"])
-                        .default_value("1h"),
+                        .possible_values(&["1h", "12h", "24h", "72h"]),
                 ),
         )
 }

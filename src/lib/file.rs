@@ -23,13 +23,22 @@ use crate::{helper::*, CATBOX_API_URL};
 ///
 /// * `file_path` - Path to the file to be uploaded
 /// * `user_hash` - User's account hash, required for deleting. (Optional)
-pub async fn from_file(file_path: &str, user_hash: Option<&str>) -> Result<String, Box<dyn Error>> {
-    let file = file_stream(file_path).await?;
-    let file_name = file_name(file_path);
+pub async fn from_file<S: Into<String>>(
+    file_path: S,
+    user_hash: Option<S>,
+) -> Result<String, Box<dyn Error>> {
+    let file_path = file_path.into();
+    let file = file_stream(&file_path).await?;
+    let file_name = file_name(&file_path);
 
     let form = Form::new()
         .text("reqtype", "fileupload")
-        .text("userhash", user_hash.unwrap_or_default().to_owned())
+        .text(
+            "userhash",
+            user_hash
+                .and_then(|hash| Some(hash.into()))
+                .unwrap_or_default(),
+        )
         .part("fileToUpload", Part::stream(file).file_name(file_name));
 
     Ok(Client::new()
@@ -51,11 +60,19 @@ pub async fn from_file(file_path: &str, user_hash: Option<&str>) -> Result<Strin
 ///
 /// * `url` - URL to file
 /// * `user_hash` - User's account hash, required for deleting. (Optional)
-pub async fn from_url(url: &str, user_hash: Option<&str>) -> Result<String, Box<dyn Error>> {
+pub async fn from_url<S: Into<String>>(
+    url: S,
+    user_hash: Option<S>,
+) -> Result<String, Box<dyn Error>> {
     let form = [
         ("reqtype", "urlupload"),
-        ("userhash", user_hash.unwrap_or_default()),
-        ("url", url),
+        (
+            "userhash",
+            &user_hash
+                .and_then(|hash| Some(hash.into()))
+                .unwrap_or_default(),
+        ),
+        ("url", &url.into()),
     ];
     Ok(Client::new()
         .post(CATBOX_API_URL)
@@ -74,10 +91,14 @@ pub async fn from_url(url: &str, user_hash: Option<&str>) -> Result<String, Box<
 ///
 /// * `user_hash` - User's account hash
 /// * `files` - Names of the files to be deleted
-pub async fn delete(user_hash: &str, files: Vec<&str>) -> Result<String, Box<dyn Error>> {
+pub async fn delete<S: Into<String>>(
+    user_hash: S,
+    files: Vec<S>,
+) -> Result<String, Box<dyn Error>> {
+    let files: Vec<_> = files.into_iter().map(|file| file.into()).collect();
     let form = [
         ("reqtype", "deletefiles"),
-        ("userhash", user_hash),
+        ("userhash", &user_hash.into()),
         ("files", &files.join(" ")),
     ];
     Ok(Client::new()

@@ -12,13 +12,13 @@ keywords = ["api", "upload"]
 categories = ["command-line-utilities", "filesystem", "api-bindings"]
 
 [dependencies]
-clap = { version = "3.1.18", features = ["std", "cargo"] }
-futures = "0.3.21"
-regex = "1.5.6"
-reqwest = { version = "0.11.10", features = ["multipart", "stream"] }
-tokio = { version = "1.19.2", features = ["full"] }
-tokio-util = { version = "0.7.3", features = ["io"] }
-url = "2.2.2"
+clap = { version = "4.1.6", features = ["std", "cargo", "derive"] }
+futures = "0.3.26"
+regex = "1.7.1"
+reqwest = { version = "0.11.14", features = ["multipart", "stream"] }
+tokio = { version = "1.25.0", features = ["full"] }
+tokio-util = { version = "0.7.7", features = ["io"] }
+url = "2.3.1"
 
 [dev-dependencies]
 tempfile = "3.3.0"

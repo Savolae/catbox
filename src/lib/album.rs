@@ -18,17 +18,23 @@ use super::CATBOX_API_URL;
 /// * `desc` - Album description
 /// * `user_hash` - User's account hash, required for deleting or editing. (Optional)
 /// * `files` - List of existing files on Catbox to be added to the album
-pub async fn create(
-    title: &str,
-    desc: &str,
-    user_hash: Option<&str>,
-    files: Vec<&str>,
+pub async fn create<S: Into<String>>(
+    title: S,
+    desc: S,
+    user_hash: Option<S>,
+    files: Vec<S>,
 ) -> Result<String, Box<dyn Error>> {
+    let files: Vec<_> = files.into_iter().map(|file| file.into()).collect();
     let form = [
         ("reqtype", "createalbum"),
-        ("userhash", user_hash.unwrap_or_default()),
-        ("title", title),
-        ("desc", desc),
+        (
+            "userhash",
+            &user_hash
+                .and_then(|hash| Some(hash.into()))
+                .unwrap_or_default(),
+        ),
+        ("title", &title.into()),
+        ("desc", &desc.into()),
         ("files", &files.join(" ")),
     ];
     Ok(Client::new()
@@ -54,19 +60,20 @@ pub async fn create(
 /// * `desc` - Album description
 /// * `files` - List of existing files on Catbox to be included in the album
 /// * `user_hash` - User's account hash
-pub async fn edit(
-    short: &str,
-    title: &str,
-    desc: &str,
-    user_hash: &str,
-    files: Vec<&str>,
+pub async fn edit<S: Into<String>>(
+    short: S,
+    title: S,
+    desc: S,
+    user_hash: S,
+    files: Vec<S>,
 ) -> Result<String, Box<dyn Error>> {
+    let files: Vec<_> = files.into_iter().map(|file| file.into()).collect();
     let form = [
         ("reqtype", "editalbum"),
-        ("userhash", user_hash),
-        ("short", short),
-        ("title", title),
-        ("desc", desc),
+        ("userhash", &user_hash.into()),
+        ("short", &short.into()),
+        ("title", &title.into()),
+        ("desc", &desc.into()),
         ("files", &files.join(" ")),
     ];
     Ok(Client::new()
@@ -87,15 +94,16 @@ pub async fn edit(
 /// * `short` - ID of the album
 /// * `user_hash` - User's account hash
 /// * `files` - List of existing files on Catbox to be added to the album
-pub async fn add_files(
-    short: &str,
-    user_hash: &str,
-    files: Vec<&str>,
+pub async fn add_files<S: Into<String>>(
+    short: S,
+    user_hash: S,
+    files: Vec<S>,
 ) -> Result<String, Box<dyn Error>> {
+    let files: Vec<_> = files.into_iter().map(|file| file.into()).collect();
     let form = [
         ("reqtype", "addtoalbum"),
-        ("short", short),
-        ("userhash", user_hash),
+        ("short", &short.into()),
+        ("userhash", &user_hash.into()),
         ("files", &files.join(" ")),
     ];
     Ok(Client::new()
@@ -116,15 +124,16 @@ pub async fn add_files(
 /// * `short` - ID of the album
 /// * `user_hash` - User's account hash
 /// * `files` - List of existing files on Catbox to be removed from the album
-pub async fn remove_files(
-    short: &str,
-    user_hash: &str,
-    files: Vec<&str>,
+pub async fn remove_files<S: Into<String>>(
+    short: S,
+    user_hash: S,
+    files: Vec<S>,
 ) -> Result<String, Box<dyn Error>> {
+    let files: Vec<_> = files.into_iter().map(|file| file.into()).collect();
     let form = [
         ("reqtype", "removefromalbum"),
-        ("userhash", user_hash),
-        ("short", short),
+        ("userhash", &user_hash.into()),
+        ("short", &short.into()),
         ("files", &files.join(" ")),
     ];
     Ok(Client::new()
@@ -144,11 +153,11 @@ pub async fn remove_files(
 ///
 /// * `short` - ID of the album
 /// * `user_hash` - User's account hash
-pub async fn delete(short: &str, user_hash: &str) -> Result<String, Box<dyn Error>> {
+pub async fn delete<S: Into<String>>(short: S, user_hash: S) -> Result<String, Box<dyn Error>> {
     let form = [
         ("reqtype", "deletealbum"),
-        ("userhash", user_hash),
-        ("short", short),
+        ("userhash", &user_hash.into()),
+        ("short", &short.into()),
     ];
     Ok(Client::new()
         .post(CATBOX_API_URL)

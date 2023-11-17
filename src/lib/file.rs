@@ -11,7 +11,7 @@ use reqwest::{
     Client,
 };
 
-use crate::{helper::*, CATBOX_API_URL};
+use crate::{helper::*, CATBOX_API_URL, UASTRING};
 
 /// Upload a file to catbox.
 ///
@@ -41,7 +41,10 @@ pub async fn from_file<S: Into<String>>(
         )
         .part("fileToUpload", Part::stream(file).file_name(file_name));
 
-    Ok(Client::new()
+    Ok(Client::builder()
+        .user_agent(UASTRING)
+        .build()
+        .unwrap_or_else(|_| Client::new())
         .post(CATBOX_API_URL)
         .multipart(form)
         .send()
@@ -74,7 +77,10 @@ pub async fn from_url<S: Into<String>>(
         ),
         ("url", &url.into()),
     ];
-    Ok(Client::new()
+    Ok(Client::builder()
+        .user_agent(UASTRING)
+        .build()
+        .unwrap_or_else(|_| Client::new())
         .post(CATBOX_API_URL)
         .form(&form)
         .send()
@@ -101,7 +107,10 @@ pub async fn delete<S: Into<String>>(
         ("userhash", &user_hash.into()),
         ("files", &files.join(" ")),
     ];
-    Ok(Client::new()
+    Ok(Client::builder()
+        .user_agent(UASTRING)
+        .build()
+        .unwrap_or_else(|_| Client::new())
         .post(CATBOX_API_URL)
         .form(&form)
         .send()

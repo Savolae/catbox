@@ -6,7 +6,7 @@ use std::error::Error;
 
 use reqwest::Client;
 
-use super::CATBOX_API_URL;
+use super::{CATBOX_API_URL, UASTRING};
 
 /// Create a new album
 ///
@@ -37,7 +37,10 @@ pub async fn create<S: Into<String>>(
         ("desc", &desc.into()),
         ("files", &files.join(" ")),
     ];
-    Ok(Client::new()
+    Ok(Client::builder()
+        .user_agent(UASTRING)
+        .build()
+        .unwrap_or_else(|_| Client::new())
         .post(CATBOX_API_URL)
         .form(&form)
         .send()
@@ -76,7 +79,10 @@ pub async fn edit<S: Into<String>>(
         ("desc", &desc.into()),
         ("files", &files.join(" ")),
     ];
-    Ok(Client::new()
+    Ok(Client::builder()
+        .user_agent(UASTRING)
+        .build()
+        .unwrap_or_else(|_| Client::new())
         .post(CATBOX_API_URL)
         .form(&form)
         .send()
@@ -106,7 +112,10 @@ pub async fn add_files<S: Into<String>>(
         ("userhash", &user_hash.into()),
         ("files", &files.join(" ")),
     ];
-    Ok(Client::new()
+    Ok(Client::builder()
+        .user_agent(UASTRING)
+        .build()
+        .unwrap_or_else(|_| Client::new())
         .post(CATBOX_API_URL)
         .form(&form)
         .send()
@@ -136,7 +145,10 @@ pub async fn remove_files<S: Into<String>>(
         ("short", &short.into()),
         ("files", &files.join(" ")),
     ];
-    Ok(Client::new()
+    Ok(Client::builder()
+        .user_agent(UASTRING)
+        .build()
+        .unwrap_or_else(|_| Client::new())
         .post(CATBOX_API_URL)
         .form(&form)
         .send()
@@ -159,7 +171,10 @@ pub async fn delete<S: Into<String>>(short: S, user_hash: S) -> Result<String, B
         ("userhash", &user_hash.into()),
         ("short", &short.into()),
     ];
-    Ok(Client::new()
+    Ok(Client::builder()
+        .user_agent(UASTRING)
+        .build()
+        .unwrap_or_else(|_| Client::new())
         .post(CATBOX_API_URL)
         .form(&form)
         .send()

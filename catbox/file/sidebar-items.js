@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["delete","from_file","from_url"]};

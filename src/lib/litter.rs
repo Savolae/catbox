@@ -11,7 +11,7 @@ use reqwest::{
     Client,
 };
 
-use crate::{helper::*, LITTER_API_URL};
+use crate::{helper::*, LITTER_API_URL, UASTRING};
 
 /// Upload a temporary file to litterbox.
 /// Max size 1GB.
@@ -32,7 +32,10 @@ pub async fn upload<S: Into<String>>(file_path: S, time: u8) -> Result<String, B
         .text("time", format!("{}h", time))
         .part("fileToUpload", Part::stream(file).file_name(file_name));
 
-    Ok(Client::new()
+    Ok(Client::builder()
+        .user_agent(UASTRING)
+        .build()
+        .unwrap_or_else(|_| Client::new())
         .post(LITTER_API_URL)
         .multipart(form)
         .send()

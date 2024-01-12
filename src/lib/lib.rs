@@ -18,3 +18,9 @@ pub mod litter;
 
 static CATBOX_API_URL: &str = "https://catbox.moe/user/api.php";
 static LITTER_API_URL: &str = "https://litterbox.catbox.moe/resources/internals/api.php";
+static UASTRING: &str = concat!(
+    env!("CARGO_PKG_NAME"),
+    "/",
+    env!("CARGO_PKG_VERSION"),
+    " (CLI tool endorsed on the tools page) - Savolae"
+);
